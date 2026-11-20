@@ -291,10 +291,7 @@ void processCommand(char *command) {
       endPtr++;
     }
 
-    if (*endPtr != '\0' ||
-        isnan(value) ||
-        value < MIN_TARGET_C ||
-        value > MAX_TARGET_C) {
+    if (*endPtr != '\0' || isnan(value) || isinf(value)) {
 
       if (serialOutputMode == OUTPUT_MONITOR) {
         Serial.println(F("Invalid target: range 50-200 C"));
@@ -411,6 +408,9 @@ void printStatus(float targetC, unsigned long pulse) {
     Serial.print(F("\tTC2:"));
     Serial.print(tc2Valid ? tc2TempC : 0.0f, 2);
 
+    Serial.print(F("\tControlTemp:"));
+    Serial.print(max(tc1TempC, tc2TempC), 2);
+
     Serial.print(F("\tTarget:"));
     Serial.print(targetC >= 0 ? targetC : 0.0f, 2);
 
@@ -447,6 +447,10 @@ void printStatus(float targetC, unsigned long pulse) {
   } else {
     Serial.println(F("SENSOR ERROR"));
   }
+
+  Serial.print(F("Control temperature: "));
+  Serial.print(max(tc1TempC, tc2TempC), 2);
+  Serial.println(F(" C"));
 
   Serial.print(F("Target: "));
   if (targetC >= 0) {
